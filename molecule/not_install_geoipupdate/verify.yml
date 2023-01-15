@@ -1,0 +1,35 @@
+---
+# code: language=ansible
+- name: Verify
+  hosts: all
+  gather_facts: false
+  # check_mode: true
+  become: true
+  tasks:
+    ## パッケージのテスト
+    - name: Gather the package facts
+      ansible.builtin.package_facts:
+        manager: auto
+    - name: Assert package
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.packages['goaccess'] is defined
+          - ansible_facts.packages['geoipupdate'] is undefined
+    - name: Check cron job file
+      ansible.builtin.stat:
+        path: /etc/cron.weekly/geoipupdate
+      register: result
+    - name: Assert cron job file
+      ansible.builtin.assert:
+        that:
+          - not result.stat.exists
+    - name: Assert goaccess geoip-database setting
+      ansible.builtin.lineinfile:
+        path: /etc/goaccess/goaccess.conf
+        line: "#geoip-database /usr/local/share/GeoIP/GeoLiteCity.dat"
+      register: result
+      check_mode: true
+    - name: Assert geoipupdate config file
+      ansible.builtin.assert:
+        that:
+          - result is not changed
