@@ -1,0 +1,10 @@
+---
+# code: language=ansible
+# - name: Restart goaccess
+#   ansible.builtin.systemd:
+#     state: restarted
+#     name: goaccess
+# - name: Reload goaccess
+#   ansible.builtin.systemd:
+#     state: reloaded
+#     name: goaccess
