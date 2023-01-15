@@ -1,25 +1,45 @@
 goaccess
 =================
 
-A brief description of the role goes here.
+Install goaccess
 
 OS Platform
 -----------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+### Debian
+
+- bullseye
+- buster
 
 Role Variables
------------------
+--------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+設定方法の詳細については[defaults/main.yml](defaults/main.yml)のサンプルコードを参照してください。
 
-Dependencies
------------------
+### `goaccess_packages`
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+インストールするパッケージ
+
+### `goaccess_install_geoipupdate`
+
+geoipupdateをインストールするかどうか
+
+### `goaccess_geoipupdate_maxmind_account_id`
+
+MaxMindgのアカウントID  
+@see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
+
+### `goaccess_geoipupdate_maxmind_license_key`
+
+MaxMindgのライセンスキー  
+@see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
+
+### `goaccess_geoipupdate_edition_ids`
+
+インストールするGeoIPデータベースのエディション
 
 Example Playbook
------------------
+--------------
 
 ```yaml
 - hosts: servers
@@ -28,6 +48,6 @@ Example Playbook
 ```
 
 License
------------------
+--------------
 
 Apache License 2.0
