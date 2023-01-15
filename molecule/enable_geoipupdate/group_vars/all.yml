@@ -1,0 +1,3 @@
+---
+goaccess_geoipupdate_maxmind_account_id: "{{ lookup('env', 'MAXMIND_ACCOUNT_ID') }}"
+goaccess_geoipupdate_maxmind_license_key: "{{ lookup('env', 'MAXMIND_LICENSE_KEY') }}"
