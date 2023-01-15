@@ -11,13 +11,13 @@ goaccess_packages:
 goaccess_install_geoipupdate: true
 
 ## -----------------
-## MaxMindgのアカウントID
+## MaxMindのアカウントID
 ## @see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
 ## -----------------
 goaccess_geoipupdate_maxmind_account_id: YOUR_ACCOUNT_ID_HERE
 
 ## -----------------
-## MaxMindgのライセンスキー
+## MaxMindのライセンスキー
 ## @see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
 ## -----------------
 goaccess_geoipupdate_maxmind_license_key: YOUR_LICENSE_KEY_HERE

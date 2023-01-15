@@ -26,12 +26,12 @@ geoipupdateをインストールするかどうか
 
 ### `goaccess_geoipupdate_maxmind_account_id`
 
-MaxMindgのアカウントID  
+MaxMindのアカウントID  
 @see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
 
 ### `goaccess_geoipupdate_maxmind_license_key`
 
-MaxMindgのライセンスキー  
+MaxMindのライセンスキー  
 @see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
 
 ### `goaccess_geoipupdate_edition_ids`
