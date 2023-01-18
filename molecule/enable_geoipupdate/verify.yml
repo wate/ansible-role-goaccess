@@ -65,7 +65,7 @@
     - name: Assert goaccess geoip-database setting
       ansible.builtin.lineinfile:
         path: /etc/goaccess/goaccess.conf
-        line: "geoip-database /usr/share/GeoIP/GeoLite2-City.mmdb"
+        line: geoip-database /usr/share/GeoIP/GeoLite2-City.mmdb
       register: result
       check_mode: true
     - name: Assert geoipupdate config file
