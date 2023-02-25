@@ -1,17 +1,22 @@
 ---
 # code: language=ansible
-- name: Include dependency task
-  ansible.builtin.import_tasks: dependency.yml
-  tags: dependency
-- name: Include repository task
+- name: Import dependency task
+  ansible.builtin.import_tasks:
+    file: dependency.yml
+  tags:
+    - role_goaccess_dependency
+- name: Import repository task
   ansible.builtin.import_tasks:
     file: repository.yml
-  tags: repository
-- name: Include package task
+  tags:
+    - role_goaccess_repository
+- name: Import package task
   ansible.builtin.import_tasks:
     file: package.yml
-  tags: package
-- name: Include setting task
+  tags:
+    - role_goaccess_package
+- name: Import setting task
   ansible.builtin.import_tasks:
     file: setting.yml
-  tags: setting
+  tags:
+    - role_goaccess_setting
