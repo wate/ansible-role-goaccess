@@ -8,11 +8,12 @@
       - curl
       - gnupg
 - name: Add apt signing key
-  ansible.builtin.apt_key:
-    url: https://deb.goaccess.io/gnugpg.key
-    state: present
+  ansible.builtin.get_url:
+    url: "{{ goaccess_apt_key_url }}"
+    dest: "{{ goaccess_apt_key_dest }}"
+    mode: "0644"
 - name: Add goaccess repository
   ansible.builtin.apt_repository:
     filename: goaccess
-    repo: deb https://deb.goaccess.io/ {{ ansible_facts.distribution_release }} main
+    repo: deb [signed-by={{ goaccess_apt_key_dest }}] https://deb.goaccess.io/ {{ ansible_facts.distribution_release }} main
     state: present

@@ -1,3 +1,6 @@
 ---
 goaccess_dependency_packages: []
 goaccess_geoipupdate_interval: weekly
+
+goaccess_apt_key_url: https://deb.goaccess.io/gnugpg.key
+goaccess_apt_key_dest: /usr/share/keyrings/goaccess.gpg.key
