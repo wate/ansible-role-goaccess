@@ -1,17 +1,44 @@
 ---
 # code: language=ansible
-- name: Find platform task file
-  ansible.builtin.set_fact:
-    include_task_file: "{{ lookup('first_found', params, errors='ignore') }}"
-  vars:
-    params:
-      files:
-        - "{{ ansible_facts.os_family }}/{{ ansible_facts.distribution }}/{{ ansible_facts.distribution_major_version }}.yml"
-        - "{{ ansible_facts.os_family }}/{{ ansible_facts.distribution }}.yml"
-        - "{{ ansible_facts.os_family }}.yml"
-      paths:
-        - tasks/package
-- name: Install packages
-  ansible.builtin.include_tasks:
-    file: "{{ include_task_file }}"
-  when: include_task_file | length > 0
+- name: Install goaccess packages
+  ansible.builtin.apt:
+    name: goaccess
+- name: Install geoipupdate dependency packages
+  when:
+    - goaccess_maxmind_account.account_id | length > 0
+    - goaccess_maxmind_account.license_key | length > 0
+  block:
+    - name: Set Github API request header
+      ansible.builtin.set_fact:
+        github_api_request_headers:
+          Accept: application/vnd.github+json
+    - name: Merge Github API Authorization request header
+      ansible.builtin.set_fact:
+        github_api_request_headers: "{{ github_api_request_headers | combine(merge_reauest_header) }}"
+      vars:
+        merge_reauest_header:
+          Authorization: Bearer {{ lookup('env', 'GITHUB_TOKEN') }}
+      when: lookup('env', 'GITHUB_TOKEN') | length > 0
+    - name: Get latest release
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/maxmind/geoipupdate/releases/latest
+        headers: "{{ github_api_request_headers }}"
+      register: latest_releases
+    - name: Set tbls_version variable
+      ansible.builtin.set_fact:
+        geoipupdate_version: "{{ latest_releases.json.tag_name }}"
+    - name: Set package file name parts variables
+      ansible.builtin.set_fact:
+        asset_file_version: "{{ geoipupdate_version[1:] }}"
+        asset_file_system: "{{ ansible_facts['system'] | lower }}"
+        asset_file_arch: "{{ arch_type_maps[ansible_facts['architecture']] }}"
+      vars:
+        arch_type_maps:
+          x86_64: amd64
+          aarch64: arm64
+    - name: Set variable
+      ansible.builtin.set_fact:
+        asset_file: geoipupdate_{{ asset_file_version }}_{{ asset_file_system }}_{{ asset_file_arch }}.deb
+    - name: Install geoipupdate
+      ansible.builtin.apt:
+        deb: https://github.com/maxmind/geoipupdate/releases/download/{{ geoipupdate_version }}/{{ asset_file }}

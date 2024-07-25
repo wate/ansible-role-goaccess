@@ -1,30 +1,20 @@
 ---
 ## -----------------
-## インストールするパッケージ
-## -----------------
-goaccess_packages:
-  - goaccess
-
-## -----------------
-## geoipupdateをインストールするかどうか
-## -----------------
-goaccess_install_geoipupdate: true
-
-## -----------------
-## MaxMindのアカウントID
+## MaxMindのアカウントIDとライセンスキー
 ## @see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
 ## -----------------
-goaccess_geoipupdate_maxmind_account_id: YOUR_ACCOUNT_ID_HERE
+goaccess_maxmind_account:
+  account_id: ""
+  license_key: ""
 
 ## -----------------
-## MaxMindのライセンスキー
-## @see https://dev.maxmind.com/geoip/geolite2-free-geolocation-data
+## インストールするMaxMindのGeoIPデータベースのエディション
 ## -----------------
-goaccess_geoipupdate_maxmind_license_key: YOUR_LICENSE_KEY_HERE
-
-## -----------------
-## インストールするGeoIPデータベースのエディション
-## -----------------
-goaccess_geoipupdate_edition_ids:
+goaccess_maxmind_database_editions:
   - GeoLite2-Country
   - GeoLite2-City
+
+## -----------------
+## GoAccessに設定するGeoIPデータベースのパス
+## -----------------
+goaccess_maxmind_database_path: /usr/share/GeoIP/GeoLite2-City.mmdb

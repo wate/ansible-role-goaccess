@@ -1,17 +1,40 @@
 ---
 # code: language=ansible
-- name: Find platform task file
+- name: Set maxmind_geoip_enabled variable
   ansible.builtin.set_fact:
-    include_task_file: "{{ lookup('first_found', params, errors='ignore') }}"
-  vars:
-    params:
-      files:
-        - "{{ ansible_facts.os_family }}/{{ ansible_facts.distribution }}/{{ ansible_facts.distribution_major_version }}.yml"
-        - "{{ ansible_facts.os_family }}/{{ ansible_facts.distribution }}.yml"
-        - "{{ ansible_facts.os_family }}.yml"
-      paths:
-        - tasks/setting
-- name: Create/update setting
-  ansible.builtin.include_tasks:
-    file: "{{ include_task_file }}"
-  when: include_task_file | length > 0
+    goaccess_geoip_enabled: "{{ goaccess_maxmind_account.account_id | length > 0 and goaccess_maxmind_account.license_key | length > 0 }}"
+- name: Set geoipupdate cron job
+  when: goaccess_geoip_enabled
+  block:
+    - name: Add/update option setting
+      ansible.builtin.lineinfile:
+        path: /etc/GeoIP.conf
+        regexp: "^{{ item.name }} "
+        line: "{{ item.name }} {{ item.value }}"
+      loop:
+        - name: AccountID
+          value: "{{ goaccess_maxmind_account.account_id }}"
+        - name: LicenseKey
+          value: "{{ goaccess_maxmind_account.license_key }}"
+        - name: EditionIDs
+          value: "{{ goaccess_maxmind_database_editions | join(' ') }}"
+    - name: Add geoipupdate cron job
+      ansible.builtin.copy:
+        src: cron/geoipupdate
+        dest: /etc/cron.{{ goaccess_geoipupdate_interval }}/geoipupdate
+        mode: "0755"
+      register: geoipupdate_cron_result
+    - name: Execute geoipupdate
+      ansible.builtin.command:
+        cmd: /etc/cron.{{ goaccess_geoipupdate_interval }}/geoipupdate
+        creates: /usr/share/GeoIP/{{ goaccess_maxmind_database_editions[0] }}.mmdb
+- name: Remove geoipupdate cron job
+  ansible.builtin.file:
+    path: /etc/cron.{{ goaccess_geoipupdate_interval }}/geoipupdate
+    state: absent
+  when: not goaccess_geoip_enabled
+- name: Update goaccess setting
+  ansible.builtin.lineinfile:
+    path: /etc/goaccess/goaccess.conf
+    regexp: "^#?geoip-database "
+    line: "{{ goaccess_geoip_enabled | ternary('', '#') }}geoip-database {{ goaccess_maxmind_database_path }}"
