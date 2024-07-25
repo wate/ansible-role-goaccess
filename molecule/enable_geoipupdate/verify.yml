@@ -16,14 +16,16 @@
           - ansible_facts.packages['goaccess'] is defined
           - ansible_facts.packages['geoipupdate'] is defined
     # ファイルのテスト
+    ## geoipupdateの設定ファイル
     - name: Check geoipupdate config file
       ansible.builtin.stat:
         path: /etc/GeoIP.conf
-      register: result
+      register: stat_result
     - name: Assert geoipupdate config file
       ansible.builtin.assert:
         that:
-          - result.stat.exists
+          - stat_result.stat.exists
+    ## MaxMindのアカウント設定及びダウンロードするGeoIPデータベースの設定
     - name: Assert geoipupdate config file
       ansible.builtin.lineinfile:
         path: /etc/GeoIP.conf
@@ -38,37 +40,41 @@
       ansible.builtin.assert:
         that:
           - result is not changed
+    ## GeoIPデータベースの自動更新の設定
     - name: Check cron job file
       ansible.builtin.stat:
         path: /etc/cron.weekly/geoipupdate
-      register: result
+      register: stat_result
     - name: Assert cron job file
       ansible.builtin.assert:
         that:
-          - result.stat.exists
+          - stat_result.stat.exists
+    ## GeoIPデータベース(国)の存在確認
     - name: Check GeoLite2-Country database file
       ansible.builtin.stat:
         path: /usr/share/GeoIP/GeoLite2-Country.mmdb
-      register: result
+      register: stat_result
     - name: Assert GeoLite2-Country database file
       ansible.builtin.assert:
         that:
-          - result.stat.exists
+          - stat_result.stat.exists
+    ## GeoIPデータベース(市)の存在確認
     - name: Check GeoLite2-City database file
       ansible.builtin.stat:
         path: /usr/share/GeoIP/GeoLite2-City.mmdb
-      register: result
+      register: stat_result
     - name: Assert GeoLite2-City database file
       ansible.builtin.assert:
         that:
-          - result.stat.exists
+          - stat_result.stat.exists
+    ## GoAccessのGeoIPデータベースの設定
     - name: Assert goaccess geoip-database setting
       ansible.builtin.lineinfile:
         path: /etc/goaccess/goaccess.conf
         line: geoip-database /usr/share/GeoIP/GeoLite2-City.mmdb
-      register: result
+      register: lineinfile_result
       check_mode: true
     - name: Assert geoipupdate config file
       ansible.builtin.assert:
         that:
-          - result is not changed
+          - lineinfile_result is not changed

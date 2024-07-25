@@ -1,10 +1,5 @@
 ---
 # code: language=ansible
-- name: Import dependency task
-  ansible.builtin.import_tasks:
-    file: dependency.yml
-  tags:
-    - role_goaccess_dependency
 - name: Import repository task
   ansible.builtin.import_tasks:
     file: repository.yml

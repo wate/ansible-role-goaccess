@@ -14,45 +14,34 @@
       ansible.builtin.assert:
         that:
           - ansible_facts.packages['goaccess'] is defined
-          - ansible_facts.packages['geoipupdate'] is defined
+          - ansible_facts.packages['geoipupdate'] is not defined
     # ファイルのテスト
+    ## geoipupdateの設定ファイル
     - name: Check geoipupdate config file
       ansible.builtin.stat:
         path: /etc/GeoIP.conf
-      register: result
+      register: stat_result
     - name: Assert geoipupdate config file
       ansible.builtin.assert:
         that:
-          - result.stat.exists
-    - name: Assert geoipupdate config file
-      ansible.builtin.lineinfile:
-        path: /etc/GeoIP.conf
-        line: "{{ item }}"
-      loop:
-        - AccountID YOUR_ACCOUNT_ID_HERE
-        - LicenseKey YOUR_LICENSE_KEY_HERE
-        - EditionIDs GeoLite2-Country GeoLite2-City
-      register: result
-      check_mode: true
-    - name: Assert geoipupdate config file
-      ansible.builtin.assert:
-        that:
-          - result is not changed
+          - not stat_result.stat.exists
+    ## GeoIPデータベースの自動更新の設定
     - name: Check cron job file
       ansible.builtin.stat:
         path: /etc/cron.weekly/geoipupdate
-      register: result
+      register: stat_result
     - name: Assert cron job file
       ansible.builtin.assert:
         that:
-          - not result.stat.exists
+          - not stat_result.stat.exists
+    ## GoAccessのGeoIPデータベースの設定
     - name: Assert goaccess geoip-database setting
       ansible.builtin.lineinfile:
         path: /etc/goaccess/goaccess.conf
         line: "#geoip-database /usr/share/GeoIP/GeoLite2-City.mmdb"
-      register: result
+      register: lineinfile_result
       check_mode: true
     - name: Assert geoipupdate config file
       ansible.builtin.assert:
         that:
-          - result is not changed
+          - lineinfile_result is not changed
